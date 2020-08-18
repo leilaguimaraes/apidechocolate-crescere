@@ -1,22 +1,22 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import App from "./App";
-import { BrowserRouter, Switch, Route} from "react-router-dom"
-import NotFound from "./pages/NotFound/404"
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import App from './pages/Home/App';
+import Create from './pages/RegisterUser/registeruser';
+import NotFound from './pages/NotFound/404';
+import Chocolate from './pages/RegisterChocolate/registerchocolate';
 import Login from './pages/Login/login';
-import RegisterUser from './pages/RegisterUser/registeruser'
-
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
       <Switch>
-        <Route path='/login' exact="true" component={Login} />
-        <Route path='/registeruser' exact="true" component={RegisterUser}/>
-        <Route path='/registerchocolate' exact="true" component={NotFound} />
-        <Route path='/' exact="true" component={App} />
-        <Route path="*" exact="true" component={NotFound} />
+        <Route path="/" exact='true' component={App} />
+        <Route path="/create" exact="true" component={Create} />
+        <Route path="/chocolate" exact="true" component={Chocolate} />
+        <Route path="/login" exact="true" component={Login} />
+        <Route path="*" component={NotFound} />
       </Switch>
     </BrowserRouter>
   </React.StrictMode>,
-  document.getElementById("root")
+  document.getElementById('root')
 );

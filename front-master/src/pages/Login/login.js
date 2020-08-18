@@ -1,50 +1,68 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState } from 'react';
 import GlobalStyle from '../../styles/global';
 import api from '../../services/api' ;
 import {Container, LoginForm} from './styles';
 import {Button} from './styles';
 import {Link} from 'react-router-dom';
 
-function Login(){
+function Login() {
 
-  const [dados, setDados] = useState({email:"", pass:""})
-  async function onFormSubmit(e) {
-    e.preventDefault();
-    console.log(dados);
-    const {email, pass} = dados
+  const token = localStorage.getItem('@chocolate-front/token');//posso ecolher qualquer nome mas ele tem que ser sempre o mesmo se não ele não vai conseguir comparar
+
+  if (token) {
+    window.location.href = '/'
   }
 
-  const handleInputChange = (e)=> {
-    setDados({
-      ...dados,
+  const [infos, setInfos] = useState({
+    email: '',
+    password:'',
+  })
+
+  const onFormSubmit = async (e) => {
+    e.preventDefault();
+
+    const {email, password: pass} = infos;
+
+    const infosToApi = {
+      email,
+      pass,
+    };
+
+    const response = await api.post('/login', infosToApi);
+
+    if (response.status !== 200) {
+      console.log("Houve um erro")
+      return alert('Houve um erro ao autenticar usuário')
+    }
+    localStorage.setItem('@chocolate-front/token', response.data.token);
+    alert('Usuário autenticado com sucesso');
+
+    window.location.href = '/';
+  }
+
+  const handleInputChange = (e) => {
+    setInfos({
+      ...infos,
       [e.target.name]: e.target.value,
     })
   }
+
+
 
   return(
     <div className="Login">
         <>
           <GlobalStyle/>
           <Container>
-          <Fragment>
           <h1>Bem-vindo de volta!</h1>
           <LoginForm onSubmit={onFormSubmit}>
 
-
-            <label
-            htmlFor="Cadastro-nome">
-              Seu e-mail
-              </label><br/>
             <input
             type='email'
             name='email'
             placeholder="nome"
             onChange= {handleInputChange}
             /><br/>
-
-            <label
-            htmlFor="Cadastro-senha">
-              Sua senha</label><br/>
 
             <input
             type='password'
@@ -58,9 +76,9 @@ function Login(){
             ></input>
 
           </LoginForm>
-          </Fragment>
+
           <p>ou</p>
-          <Button><Link to='/registeruser'>Cadastre-se</Link></Button>
+          <Button><Link to='/create'>Cadastre-se</Link></Button>
           </Container>
         </>
     </div>

@@ -1,52 +1,99 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState } from 'react';
 import GlobalStyle from '../../styles/global';
-import api from '../../services/api' ;
-import {Container, LoginForm} from './styles';
-import {Button} from './styles';
-import {Link} from 'react-router-dom';
+import { Container} from '../../styles/style';
+import { ChocolateForm } from './style';
+import chocolateImg from '../../assets/images/chocolate.svg';
+import api from '../../services/api';
 
-function RegisterUser(){
+function Create() {
+  // const token = localStorage.getItem('@chocolate-front/token');
 
-  return(
-    <div className="RegisterUser">
-        <>
-          <GlobalStyle/>
-          <Container>
-          <Fragment>
-          <h1>Cadastre-se</h1>
-          <LoginForm>
-            <form>
+  // if (!token) {
+  //   window.location.href = '/login';
+  // }
 
-            <label
-            htmlFor="Cadastro-nome">
-              Seu e-mail
-              </label><br/>
+  const [infos, setInfos] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  const onFormSubmit = async (e) => {
+    e.preventDefault();
+    const { name, email, password: pass, confirmPassword } = infos;
+
+    if (pass !== confirmPassword) {
+      return alert('As senhas digitadas não conferem');
+    }
+
+    const infosToApi = {
+      name,
+      email,
+      pass,
+    };
+
+    const response = await api.post('/users', infosToApi);
+    console.log(response);
+
+    if (response.status !== 201) {
+      console.log(response);
+      return alert('Houve um erro ao criar o usuário');
+    }
+
+    alert('Usuário criado com sucesso');
+
+    window.location.href = '/'; // redireciona a página para /
+  };
+
+  const handleInputChange = (e) => {
+    setInfos({
+      ...infos,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  return (
+    <div className="App">
+      <>
+        <GlobalStyle />
+        <Container>
+          <img src={chocolateImg} alt="Logo barra de chocolate" />
+          <h1>Chocolates</h1>
+          <h2>Cadastrar usuário</h2>
+
+          <ChocolateForm onSubmit={onFormSubmit}>
             <input
-            type='email'
-            name='email'
-            placeholder="nome"
-            /><br/>
-
-            <label
-            htmlFor="Cadastro-senha">
-              Sua senha</label><br/>
-
+              type="email"
+              name="email"
+              placeholder="Digite seu e-mail"
+              onChange={handleInputChange}
+            />
             <input
-            type='password'
-            name='pass'
-            placeholder="senha"
-            /><br/>
+              type="text"
+              name="name"
+              placeholder="Digite seu nome"
+              onChange={handleInputChange}
+            />
             <input
-            type='submit'
-            value='Cadastrar'
-            ></input>
-            </form >
-          </LoginForm>
-          </Fragment>
-          </Container>
-        </>
+              type="password"
+              name="password"
+              placeholder="Digite sua senha"
+              onChange={handleInputChange}
+            />
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirme sua senha"
+              onChange={handleInputChange}
+            />
+
+            <button type="submit">Cadastrar</button>
+          </ChocolateForm>
+        </Container>
+      </>
     </div>
-  )
+  );
 }
 
-export default RegisterUser;
+export default Create;
